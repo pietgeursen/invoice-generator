@@ -1,0 +1,30 @@
+{
+  "name": "",
+  "version": "1.0.0",
+  "description": "i am a yopro",
+  "main": "index.js",
+  "scripts": {
+    "start": "budo . -d --serve bundle.js --live"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pietgeursen/"
+  },
+  "author": "pietgeursen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pietgeursen//issues"
+  },
+  "homepage": "https://github.com/pietgeursen/",
+  "dependencies": {
+    "budo": "^9.2.2",
+    "clone": "^2.1.0",
+    "morphdom": "^2.2.1",
+    "redux": "^3.6.0",
+    "yo-yo": "^1.3.1"
+  },
+  "devDependencies": {
+    "@mmckegg/mutant": "github:mmckegg/mutant",
+    "setimmediate": "^1.0.5"
+  }
+}
