@@ -12,11 +12,13 @@ var state = Struct({
   lineItems: MutantArray([{
     description: 'teaching work',
     qty: 10,
-    price: 3
+    price: 3,
+    isEditing: false
   },{
     description: 'being kewl',
     qty: 2,
-    price: 3
+    price: 3,
+    isEditing: true
   }])
 })
 
@@ -46,18 +48,28 @@ function dispatch(action) {
   mutator(state, action) 
 }
 
+function renderEditingItem(item){
+  return  h('div.item', {}, [
+    h('input', {value: item.description}),
+    h('input', {value: item.qty}),
+    h('input', {value: item.price}),
+    h('div', {}, lineTotal(item)),
+  ])
+}
+function renderItem(item){
+  return  h('div.item', {}, [
+    h('div', {}, item.description),
+    h('div', {}, item.qty),
+    h('div', {}, item.price),
+    h('div', {}, lineTotal(item)),
+  ])
+}
 function render (state, dispatch) {
   return h('div',{}, [
     h('h1', {}, state.title),
     h('div#lines', {}, state.lineItems().map(item => {
-      return  h('div.item', {type: 'text'}, [
-        h('div', {}, item.description),
-        h('div', {}, item.qty),
-        h('div', {}, item.price),
-        h('div', {}, lineTotal(item)),
-      ])
+      return item.isEditing ? renderEditingItem(item) : renderItem(item) 
     }) 
-      
     )
   ])
 }
