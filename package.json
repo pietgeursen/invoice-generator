@@ -4,7 +4,20 @@
   "description": "i am a yopro",
   "main": "index.js",
   "scripts": {
-    "start": "budo . -d --serve bundle.js --live"
+    "start": "budo . -d --serve bundle.js --live",
+    "build": "browserify . -o bundle.js -g uglifyify",
+    "test": "browserify test/index.js | node | tap-spec",
+    "dist": "mkdir -p dist && bash -c 'cp *.{js,html,css} dist'",
+    "push": "gh-pages -d dist",
+    "deploy": "npm run build && npm run dist && npm run push"
+  },
+  "browserify": {
+    "transform": [
+      "babelify"
+    ]
+  },
+  "babel": {
+    "presets": ["es2015"] 
   },
   "repository": {
     "type": "git",
@@ -16,19 +29,20 @@
     "url": "https://github.com/pietgeursen//issues"
   },
   "homepage": "https://github.com/pietgeursen/",
-  "dependencies": {
-    "budo": "^9.2.2",
-    "clone": "^2.1.0",
-    "morphdom": "^2.2.1",
-    "redux": "^3.6.0",
-    "yo-yo": "^1.3.1"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@mmckegg/mutant": "github:mmckegg/mutant",
+    "babelify": "^7.3.0",
+    "babel-preset-es2015": "^6.5.0",
+    "browserify": "^13.1.1",
+    "budo": "^9.2.2",
+    "gh-pages": "^0.12.0",
     "levelup": "^1.3.3",
     "localstorage-down": "^0.6.6",
     "pull-level": "^2.0.3",
     "pull-stream": "^3.5.0",
-    "setimmediate": "^1.0.5"
+    "redux": "^3.6.0",
+    "setimmediate": "^1.0.5",
+    "uglifyify": "^3.0.4"
   }
 }
