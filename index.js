@@ -55,43 +55,48 @@ function dispatch(action) {
 
 function renderEditingItem(item){
   return  h('div.item', {}, [
-    h('input', {value: item.description, 'ev-change': (e) =>item.description.set(e.target.value)}),
-    h('input', {value: item.qty, 'ev-change': (e) =>item.qty.set(e.target.value)}),
-    h('input', {value: item.price, 'ev-change': (e) =>item.price.set(e.target.value)}),
-    h('div', {}, lineTotal(item)),
+    h('input.fl.w-40', {value: item.description, 'ev-change': (e) =>item.description.set(e.target.value)}),
+    h('input.fl.w-20', {value: item.qty, 'ev-change': (e) =>item.qty.set(e.target.value)}),
+    h('input.fl.w-20', {value: item.price, 'ev-change': (e) =>item.price.set(e.target.value)}),
+    h('div.fl.w-20', {}, lineTotal(item)),
     h('button', {'ev-click': () => item.isEditing.set(false)}, 'Done')
   ])
 }
 
 function renderItem(item){
   return  h('div.item', {'ev-click': () => item.isEditing.set(true)}, [
-    h('div', {}, item.description),
-    h('div', {}, item.qty),
-    h('div', {}, item.price),
-    h('div', {}, lineTotal(item)),
+    h('div.fl.w-40', {}, item.description),
+    h('div.fl.w-20', {}, item.qty),
+    h('div.fl.w-20', {}, ['$', item.price]),
+    h('div.fl.w-20', {}, ['$', lineTotal(item)]),
   ])
 }
 
 
 function render (state, dispatch) {
-  return h('div#app',{}, [
-    h('div#title', {}, [
-      h('h1', {}, state.title),
+  return h('div#app.ph4',{}, [
+    h('div#title.pv4', {}, [
+      h('div.f1', {}, state.user.userName),
     ]),
     h('div#header', {}, [
-      h('div', {}, [
+      h('div.fl.w-25', {}, [
         h('div', {}, ['Invoice #', state.invoiceNumber]),
         h('div', {}, state.date),
         h('div', {}, ['GST: ', state.user.gst]),
       ]),
-      h('div', {}, [
-        h('h2', {}, 'Invoice'),
-        h('div', {}, state.client.clientName),
+      h('div.fl.w-75', {}, [
+        h('div.f2.tr', {}, 'Invoice'),
+        h('div.f3.tr', {}, state.client.clientName),
       ])
     ]),
-    h('div#lines', {}, MutantMap(state.lineItems, item => {
-      return when(item.isEditing, renderEditingItem(item), renderItem(item))
-    }) 
+    h('div#items.pt6', {}, [
+      h('div.fl.w-40.f3',{}, 'Description'),
+      h('div.fl.w-20.f3',{}, 'Qty'),
+      h('div.fl.w-20.f3',{}, 'Price'),
+      h('div.fl.w-20.f3',{}, 'Total'),
+      h('div.pt4', {}, MutantMap(state.lineItems, item => {
+        return when(item.isEditing, renderEditingItem(item), renderItem(item))
+      }))] 
     )
   ])
 }
