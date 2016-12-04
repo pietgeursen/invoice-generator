@@ -57,20 +57,20 @@ function dispatch(action) {
 
 function renderEditingItem(item){
   return  h('div.item', {}, [
-    h('input.fl.w-40', {value: item.description, 'ev-change': (e) =>item.description.set(e.target.value)}),
-    h('input.fl.w-20', {value: item.qty, 'ev-change': (e) =>item.qty.set(e.target.value)}),
-    h('input.fl.w-20', {value: item.price, 'ev-change': (e) =>item.price.set(e.target.value)}),
-    h('div.fl.w-20', {}, lineTotal(item)),
-    h('button', {'ev-click': () => item.isEditing.set(false)}, 'Done')
+    h('input.fl.w-30', {value: item.description, 'ev-change': (e) =>item.description.set(e.target.value)}),
+    h('input.fl.w-20.tr', {value: item.qty, 'ev-change': (e) =>item.qty.set(e.target.value)}),
+    h('input.fl.w-20.tr', {value: item.price, 'ev-change': (e) =>item.price.set(e.target.value)}),
+    h('div.fl.w-20.tr', {}, lineTotal(item)),
+    h('button.fr', {'ev-click': () => item.isEditing.set(false)}, 'Done')
   ])
 }
 
 function renderItem(item){
   return  h('div.item', {'ev-click': () => item.isEditing.set(true)}, [
-    h('div.fl.w-40', {}, item.description),
-    h('div.fl.w-20', {}, item.qty),
-    h('div.fl.w-20', {}, ['$', item.price]),
-    h('div.fl.w-20', {}, ['$', lineTotal(item)]),
+    h('div.fl.w-30', {}, item.description),
+    h('div.fl.w-20.tr', {}, item.qty),
+    h('div.fl.w-20.tr', {}, ['$', item.price]),
+    h('div.fl.w-20.tr', {}, ['$', lineTotal(item)]),
   ])
 }
 
@@ -92,10 +92,10 @@ function render (state, dispatch) {
       ])
     ]),
     h('div#items.pt6', {}, [
-      h('div.fl.w-40.f3',{}, 'Description'),
-      h('div.fl.w-20.f3',{}, 'Qty'),
-      h('div.fl.w-20.f3',{}, 'Price'),
-      h('div.fl.w-20.f3',{}, 'Total'),
+      h('div.fl.w-30.f3',{}, 'Description'),
+      h('div.fl.w-20.f3.tr',{}, 'Qty'),
+      h('div.fl.w-20.f3.tr',{}, 'Price'),
+      h('div.fl.w-20.f3.tr',{}, 'Total'),
       h('div.pt4', {}, MutantMap(state.lineItems, item => {
         return when(item.isEditing, renderEditingItem(item), renderItem(item))
       }))] 
