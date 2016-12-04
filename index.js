@@ -39,11 +39,10 @@ var state = Struct({
 })
 
 
-const subtotal = computed([state.lineItems], items => items.reduce((sum, item) => { return sum + item.qty * item.price}, 0))
-const gst = computed([subtotal], subtotal => subtotal * 0.15)
-const total = computed([subtotal], subtotal => subtotal * 1.15)
-const lineTotal = (item) => computed([item], item => item.qty * item.price)
-const line1Total = lineTotal(state.lineItems()[0])
+const subtotal = computed([state.lineItems], items => items.reduce((sum, item) => { return sum + item.qty * item.price}, 0).toFixed(2))
+const gst = computed([subtotal], subtotal => (subtotal * 0.15).toFixed(2))
+const total = computed([subtotal], subtotal => (subtotal * 1.15).toFixed(2))
+const lineTotal = (item) => computed([item], item => (item.qty * item.price).toFixed(2))
 
 
 function mutator(state, action) {
@@ -100,7 +99,7 @@ function render (state, dispatch) {
         return when(item.isEditing, renderEditingItem(item), renderItem(item))
       }))] 
     ),
-    h('div#totals.pt5', {}, [
+    h('div#totals.pt5.fr', {}, [
       h('div', {}, subtotal),
       h('div', {}, gst),
       h('div', {}, total)
