@@ -40,6 +40,8 @@ var state = Struct({
 
 
 const subtotal = computed([state.lineItems], items => items.reduce((sum, item) => { return sum + item.qty * item.price}, 0))
+const gst = computed([subtotal], subtotal => subtotal * 0.15)
+const total = computed([subtotal], subtotal => subtotal * 1.15)
 const lineTotal = (item) => computed([item], item => item.qty * item.price)
 const line1Total = lineTotal(state.lineItems()[0])
 
@@ -97,7 +99,12 @@ function render (state, dispatch) {
       h('div.pt4', {}, MutantMap(state.lineItems, item => {
         return when(item.isEditing, renderEditingItem(item), renderItem(item))
       }))] 
-    )
+    ),
+    h('div#totals.pt5', {}, [
+      h('div', {}, subtotal),
+      h('div', {}, gst),
+      h('div', {}, total)
+    ])
   ])
 }
 
