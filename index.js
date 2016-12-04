@@ -1,4 +1,8 @@
 require('setimmediate')
+//var levelup = require('levelup');
+//var localstorage = require('localstorage-down');
+//var pull = require('pull-stream');
+//var pl = require('pull-level');
 var h = require('@mmckegg/mutant/html-element');
 var Struct = require('@mmckegg/mutant/struct');
 var computed = require('@mmckegg/mutant/computed');
@@ -7,37 +11,65 @@ var MutantMap = require('@mmckegg/mutant/map');
 var Value = require('@mmckegg/mutant/value');
 var when = require('@mmckegg/mutant/when');
 
-var main = document.querySelector('main')
 
-var state = Struct({ 
+
+var initialstate = { 
   title: 'Counter MUTANT',
   invoiceNumber: 38,
   date: '4 December 2016',
-  user: Struct({
+  user: {
     userName: 'Piet Geursen',
     bankAccount: '38-900103434343',
     phone: '+64274243',
     gst: '71-590-',
     address: '',
     email: ''
-  }),
-  client: Struct({
+  },
+  client: {
     clientName: 'Enspiral Dev Academy',
     address: ''
-  }),
-  lineItems: MutantArray([Struct({
+  },
+  lineItems: ([{
     description: 'teaching work',
     qty: 10,
     price: 3,
     isEditing: false
-  }),Struct({
+  },{
     description: 'being kewl',
     qty: 2,
     price: 3,
     isEditing: true
-  })])
-})
+  }])
+}
 
+function stateToObservable(state) {
+  const lineItems = MutantArray(state.lineItems.map(Struct))
+  const user = Struct(state.user)
+  var newState = Object.assign({}, state, {lineItems, user})
+  return Struct(newState) 
+}
+
+function Item(ob) {
+  var _ob = ob || {description: '', qty: 0, price: 0, isEditing: true}
+  return Struct(_ob)
+}
+//var db = levelup('invoices', {db: localstorage})
+//
+var state = stateToObservable(initialstate)
+//
+//
+//pull(
+//  pl.read(db),
+//  pull.drain(storeState => {
+//    var newState = JSON.parse(storeState.value) 
+//    state.set(newState)
+//  })
+//)
+//
+//state(state => {
+//  var str = JSON.stringify(state)
+//  db.put('state', str)
+//})
 
 const subtotal = computed([state.lineItems], items => items.reduce((sum, item) => { return sum + item.qty * item.price}, 0).toFixed(2))
 const gst = computed([subtotal], subtotal => (subtotal * 0.15).toFixed(2))
@@ -54,13 +86,15 @@ function dispatch(action) {
   mutator(state, action) 
 }
 
-function renderEditingItem(item){
+function renderEditingItem(item, items){
   return  h('div.item', {}, [
     h('input.fl.w-30', {value: item.description, 'ev-change': (e) =>item.description.set(e.target.value)}),
     h('input.fl.w-20.tr', {value: item.qty, 'ev-change': (e) =>item.qty.set(e.target.value)}),
     h('input.fl.w-20.tr', {value: item.price, 'ev-change': (e) =>item.price.set(e.target.value)}),
     h('div.fl.w-20.tr', {}, lineTotal(item)),
-    h('button.fr', {'ev-click': () => item.isEditing.set(false)}, 'Done')
+    h('button.fr', {'ev-click': () => item.isEditing.set(false)}, 'Done'),
+    h('button.fr', {'ev-click': () => items.delete(item)}, 'Remove'),
+    h('button.fr', {'ev-click': () => items.push(Item())}, 'Add')
   ])
 }
 
@@ -96,7 +130,7 @@ function render (state, dispatch) {
       h('div.fl.w-20.f3.tr',{}, 'Price'),
       h('div.fl.w-20.f3.tr',{}, 'Total'),
       h('div.pt4', {}, MutantMap(state.lineItems, item => {
-        return when(item.isEditing, renderEditingItem(item), renderItem(item))
+        return when(item.isEditing, renderEditingItem(item, state.lineItems), renderItem(item))
       }))] 
     ),
     h('div#totals.pt5.fr', {}, [
@@ -108,5 +142,6 @@ function render (state, dispatch) {
 }
 
 var app = render(state, dispatch)
+var main = document.querySelector('main')
 main.appendChild(app)
 
