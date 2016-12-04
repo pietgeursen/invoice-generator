@@ -11,7 +11,20 @@ var main = document.querySelector('main')
 
 var state = Struct({ 
   title: 'Counter MUTANT',
-  count: 0,
+  invoiceNumber: 38,
+  date: '4 December 2016',
+  user: Struct({
+    userName: 'Piet Geursen',
+    bankAccount: '38-900103434343',
+    phone: '+64274243',
+    gst: '71-590-',
+    address: '',
+    email: ''
+  }),
+  client: Struct({
+    clientName: 'Enspiral Dev Academy',
+    address: ''
+  }),
   lineItems: MutantArray([Struct({
     description: 'teaching work',
     qty: 10,
@@ -30,11 +43,6 @@ const subtotal = computed([state.lineItems], items => items.reduce((sum, item) =
 const lineTotal = (item) => computed([item], item => item.qty * item.price)
 const line1Total = lineTotal(state.lineItems()[0])
 
-console.log(subtotal())
-console.log(line1Total())
-line1Total(console.log)
-subtotal(console.log)
-state(console.log)
 
 function mutator(state, action) {
   switch (action.type) {
@@ -66,10 +74,23 @@ function renderItem(item){
 
 
 function render (state, dispatch) {
-  return h('div',{}, [
-    h('h1', {}, state.title),
+  return h('div#app',{}, [
+    h('div#title', {}, [
+      h('h1', {}, state.title),
+    ]),
+    h('div#header', {}, [
+      h('div', {}, [
+        h('div', {}, ['Invoice #', state.invoiceNumber]),
+        h('div', {}, state.date),
+        h('div', {}, ['GST: ', state.user.gst]),
+      ]),
+      h('div', {}, [
+        h('h2', {}, 'Invoice'),
+        h('div', {}, state.client.clientName),
+      ])
+    ]),
     h('div#lines', {}, MutantMap(state.lineItems, item => {
-      return when(item.isEditing, renderEditingItem(item) , renderItem(item))
+      return when(item.isEditing, renderEditingItem(item), renderItem(item))
     }) 
     )
   ])
